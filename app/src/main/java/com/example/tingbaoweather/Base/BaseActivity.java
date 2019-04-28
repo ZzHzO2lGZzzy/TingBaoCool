@@ -27,8 +27,10 @@ public abstract class BaseActivity extends Activity {
         ButterKnife.bind(this);
         initView();
     }
+
     //设置布局
     protected abstract int getLayout();
+
     //初始化布局
     protected abstract void initView();
 
@@ -36,10 +38,10 @@ public abstract class BaseActivity extends Activity {
     public void initStatusBar(boolean isTransparent) {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        if(isTransparent){
+        if (isTransparent) {
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        }else{
+        } else {
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }

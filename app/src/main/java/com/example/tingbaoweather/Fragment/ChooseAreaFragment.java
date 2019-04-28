@@ -1,6 +1,7 @@
 package com.example.tingbaoweather.Fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,12 +12,16 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.tingbaoweather.Activity.MainActivity;
+import com.example.tingbaoweather.Activity.WeatherActivity;
 import com.example.tingbaoweather.Base.BaseFragment;
 import com.example.tingbaoweather.Bean.City;
 import com.example.tingbaoweather.Bean.Country;
 import com.example.tingbaoweather.Bean.Province;
 import com.example.tingbaoweather.Html.JsonAnalysis;
 import com.example.tingbaoweather.R;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -81,6 +86,19 @@ public class ChooseAreaFragment extends BaseFragment {
                 } else if (Level == LEVEL_CITY) {
                     chooseCity = cityList.get(position);
                     showCountry();
+                } else if (Level == LEVEL_COUNTRY) {
+                    if (mActivity instanceof WeatherActivity) {//在天气界面打开抽屉布局重新选择地区
+                        final String weatherId = countryList.get(position).getWeatherId();
+                        final WeatherActivity weatherActivity = (WeatherActivity) mActivity;
+                        weatherActivity.drawerLayout.closeDrawers();
+                        weatherActivity.loadData(weatherId);
+                    } else if (mActivity instanceof MainActivity) {//选择地区跳转查看天气
+                        String weatherId = countryList.get(position).getWeatherId();
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weatherId", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
                 }
             }
         });
@@ -163,8 +181,6 @@ public class ChooseAreaFragment extends BaseFragment {
                             for (int i = 0; i < cityList.size(); i++) {
                                 City city = new City();
                                 city.setCityName(cityList.get(i).getCityName());
-                                Log.i("Zz", "name=" + cityList.get(i).getCityName());
-
                                 city.setCityCode(cityList.get(i).getCityCode());
                                 city.setProvinceId(urlProvince);
                                 city.save();
@@ -226,7 +242,6 @@ public class ChooseAreaFragment extends BaseFragment {
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
-            Log.i("Zz", "数据库提取country");
         } else {
             urlCity = chooseCity.getCityCode();
             String url = "http://guolin.tech/api/china/" + urlProvince + "/" + urlCity;
