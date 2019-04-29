@@ -1,6 +1,7 @@
 package com.example.tingbaoweather.Activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -19,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.tingbaoweather.Base.BaseActivity;
 import com.example.tingbaoweather.Bean.Weather;
 import com.example.tingbaoweather.R;
+import com.example.tingbaoweather.Service.AutoUpdateService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
@@ -172,7 +174,7 @@ public class WeatherActivity extends BaseActivity {
         });
     }
 
-    private void showweather(Weather weather) {
+    public void showweather(Weather weather) {
         scrollView.setVisibility(View.VISIBLE);
         titleTextView1.setText(weather.basic.city);
         timeTextView1.setText(weather.basic.update.loc);
@@ -203,8 +205,8 @@ public class WeatherActivity extends BaseActivity {
         washTextView5.setText(weather.suggestion.cw.txt);
         sportTextView5.setText(weather.suggestion.sport.txt);
 
-
         loadPicture();
+        startService();
     }
 
     private void loadPicture() {
@@ -239,5 +241,15 @@ public class WeatherActivity extends BaseActivity {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
+    }
+
+    private void startService() {
+        Intent intent = new Intent(WeatherActivity.this, AutoUpdateService.class);
+        startService(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }
